@@ -1,0 +1,28 @@
+# AeroTunis : instance Oracle XE isolee (Step 1 - Infrastructure)
+services:
+  oracle-db:
+    image: gvenzl/oracle-xe:21-slim
+    container_name: aerotunis-db
+    hostname: oracle-db
+    environment:
+      ORACLE_PASSWORD: AeroTunis2026        # mot de passe SYS/SYSTEM (environnement de test local)
+    ports:
+      - "1521:1521"                         # acces reseau (connexion distante depuis l'hote)
+    volumes:
+      - ./:/work                            # scripts SQL et journaux
+      - oracle-data:/opt/oracle/oradata     # donnees persistantes
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 40s
+    networks:
+      - aerotunis-net
+
+volumes:
+  oracle-data:
+
+networks:
+  aerotunis-net:
+    name: aerotunis-net
